@@ -6,6 +6,7 @@
     <AssemblyName>Atya.Errors.Validation</AssemblyName>
     <RootNamespace>Atya.Errors.Validation</RootNamespace>
     <IsPackable>true</IsPackable>
+    <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
     <Authors>Arsen Asulyan</Authors>
     <Copyright>Copyright (c) 2026 Arsen Asulyan</Copyright>
     <Description>Validation primitives and error helpers for Atya error handling packages.</Description>
