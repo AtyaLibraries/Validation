@@ -20,7 +20,7 @@ public sealed class ValidatorExtensionsTests
             new EmailMustContainAtValidator()
         };
 
-        var result = await validators.ValidateAllAsync(string.Empty);
+        var result = await validators.ValidateAllAsync(string.Empty, TestContext.Current.CancellationToken);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().HaveCount(2);
@@ -35,7 +35,7 @@ public sealed class ValidatorExtensionsTests
             new EmailMustContainAtValidator()
         };
 
-        var result = await validators.ValidateAllAsync("user@example.com");
+        var result = await validators.ValidateAllAsync("user@example.com", TestContext.Current.CancellationToken);
 
         result.IsValid.Should().BeTrue();
         result.Errors.Should().BeEmpty();
@@ -61,7 +61,10 @@ public sealed class ValidatorExtensionsTests
     [Fact]
     public async Task ValidateAllAsync_Should_Throw_When_Validators_Is_Null()
     {
-        var act = async () => await ValidatorExtensions.ValidateAllAsync<string>(null!, "abc");
+        var act = async () => await ValidatorExtensions.ValidateAllAsync<string>(
+            null!,
+            "abc",
+            TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
@@ -75,7 +78,7 @@ public sealed class ValidatorExtensionsTests
             null!
         };
 
-        var act = async () => await validators.ValidateAllAsync("abc");
+        var act = async () => await validators.ValidateAllAsync("abc", TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
@@ -88,7 +91,7 @@ public sealed class ValidatorExtensionsTests
             new NullResultValidator()
         };
 
-        var act = async () => await validators.ValidateAllAsync("abc");
+        var act = async () => await validators.ValidateAllAsync("abc", TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
@@ -112,7 +115,9 @@ public sealed class ValidatorExtensionsTests
     {
         var validator = new EmailRequiredValidator();
 
-        var result = await validator.ValidateAndThrowAsync("user@example.com");
+        var result = await validator.ValidateAndThrowAsync(
+            "user@example.com",
+            cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeSameAs(ValidationResult.Success);
     }
@@ -122,7 +127,9 @@ public sealed class ValidatorExtensionsTests
     {
         var validator = new EmailRequiredValidator();
 
-        var act = async () => await validator.ValidateAndThrowAsync(string.Empty);
+        var act = async () => await validator.ValidateAndThrowAsync(
+            string.Empty,
+            cancellationToken: TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ValidationException>();
     }
@@ -130,7 +137,10 @@ public sealed class ValidatorExtensionsTests
     [Fact]
     public async Task ValidateAndThrowAsync_Should_Throw_When_Validator_Is_Null()
     {
-        var act = async () => await ValidatorExtensions.ValidateAndThrowAsync<string>(null!, "abc");
+        var act = async () => await ValidatorExtensions.ValidateAndThrowAsync<string>(
+            null!,
+            "abc",
+            cancellationToken: TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
@@ -140,7 +150,9 @@ public sealed class ValidatorExtensionsTests
     {
         var validator = new NullResultValidator();
 
-        var act = async () => await validator.ValidateAndThrowAsync("abc");
+        var act = async () => await validator.ValidateAndThrowAsync(
+            "abc",
+            cancellationToken: TestContext.Current.CancellationToken);
 
         await act.Should().ThrowAsync<ArgumentNullException>();
     }

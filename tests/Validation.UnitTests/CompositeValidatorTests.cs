@@ -19,7 +19,7 @@ public sealed class CompositeValidatorTests
             new LengthValidator()
         });
 
-        var result = await validator.ValidateAsync(string.Empty);
+        var result = await validator.ValidateAsync(string.Empty, TestContext.Current.CancellationToken);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().HaveCount(2);
@@ -34,7 +34,7 @@ public sealed class CompositeValidatorTests
             new LengthValidator()
         });
 
-        var result = await validator.ValidateAsync("abcd");
+        var result = await validator.ValidateAsync("abcd", TestContext.Current.CancellationToken);
 
         result.IsValid.Should().BeTrue();
     }
