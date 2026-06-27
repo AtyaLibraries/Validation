@@ -1,27 +1,27 @@
-<Project Sdk="Atya.Build.Sdk">
+﻿<Project Sdk="Atya.Build.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
     <PackageId>Atya.Errors.Validation</PackageId>
     <AssemblyName>Atya.Errors.Validation</AssemblyName>
     <RootNamespace>Atya.Errors.Validation</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
     <Authors>Arsen Asulyan</Authors>
+    <Company>Atya</Company>
     <Copyright>Copyright (c) 2026 Arsen Asulyan</Copyright>
     <Description>Validation primitives and error helpers for Atya error handling packages.</Description>
     <PackageTags>dotnet;errors;validation;atya</PackageTags>
     <RepositoryUrl>https://github.com/AtyaLibraries/Validation</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-    <NoWarn>$(NoWarn);RS0026;SA1611;SA1615;SA1313</NoWarn>
 
     <!-- MinVer derives the version from git tags (e.g. tag `v1.2.3` -> 1.2.3). -->
+    <MinVerTagPrefix>v</MinVerTagPrefix>
     <MinVerDefaultPreReleaseIdentifiers>alpha.0</MinVerDefaultPreReleaseIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="" />
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="" Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
 
   <ItemGroup Label="Runtime dependencies">
