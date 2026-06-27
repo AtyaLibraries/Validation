@@ -7,8 +7,6 @@
 *.tmp
 *.temp
 *.cache
-*.metaproj
-*.metaproj.tmp
 
 # User-specific files
 *.user
