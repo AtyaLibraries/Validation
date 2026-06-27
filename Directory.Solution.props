@@ -1,7 +1,0 @@
-<Project>
-
-  <PropertyGroup Label="Solution restore">
-    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
-  </PropertyGroup>
-
-</Project>
