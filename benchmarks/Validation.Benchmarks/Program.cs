@@ -13,8 +13,15 @@ using Atya.Errors.Validation.Validators;
 
 namespace Validation.Benchmarks;
 
+/// <summary>
+/// Runs the Atya.Errors.Validation benchmark suite.
+/// </summary>
 public static class Program
 {
+    /// <summary>
+    /// Executes the benchmark suite.
+    /// </summary>
+    /// <param name="args">Command-line arguments passed to BenchmarkDotNet.</param>
     public static void Main(string[] args)
     {
         BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly)
@@ -22,6 +29,9 @@ public static class Program
     }
 }
 
+/// <summary>
+/// Benchmarks validation result creation and combination.
+/// </summary>
 [MemoryDiagnoser]
 [RankColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
@@ -39,6 +49,9 @@ public class ValidationResultBenchmarks
     private ValidationResult _singleFailureResult = ValidationResult.Success;
     private ValidationResult _secondFailureResult = ValidationResult.Success;
 
+    /// <summary>
+    /// Initializes benchmark validation result state.
+    /// </summary>
     [GlobalSetup]
     public void Setup()
     {
@@ -46,6 +59,10 @@ public class ValidationResultBenchmarks
         _secondFailureResult = ValidationResult.FromFailure(_failures[1]);
     }
 
+    /// <summary>
+    /// Creates a validation result from a single failure.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark(Baseline = true)]
     [BenchmarkCategory("result")]
     public ValidationResult FromSingleFailure()
@@ -53,6 +70,10 @@ public class ValidationResultBenchmarks
         return ValidationResult.FromFailure(_failures[0]);
     }
 
+    /// <summary>
+    /// Creates a validation result from multiple failures.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("result")]
     public ValidationResult FromMultipleFailures()
@@ -60,6 +81,10 @@ public class ValidationResultBenchmarks
         return ValidationResult.FromFailures(_failures);
     }
 
+    /// <summary>
+    /// Combines two validation results.
+    /// </summary>
+    /// <returns>The combined validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("result")]
     public ValidationResult CombineTwoResults()
@@ -67,6 +92,10 @@ public class ValidationResultBenchmarks
         return ValidationResult.Combine(_singleFailureResult, _secondFailureResult);
     }
 
+    /// <summary>
+    /// Appends one failure to a validation result.
+    /// </summary>
+    /// <returns>The updated validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("result")]
     public ValidationResult AppendFailure()
@@ -75,6 +104,9 @@ public class ValidationResultBenchmarks
     }
 }
 
+/// <summary>
+/// Benchmarks validator execution helpers and composite validators.
+/// </summary>
 [MemoryDiagnoser]
 [RankColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
@@ -88,6 +120,9 @@ public class ValidatorExecutionBenchmarks
     private CompositeValidator<CreateCustomerCommand> _compositeValidator = new CompositeValidator<CreateCustomerCommand>(
         Array.Empty<IValidator<CreateCustomerCommand>>());
 
+    /// <summary>
+    /// Initializes benchmark validators.
+    /// </summary>
     [GlobalSetup]
     public void Setup()
     {
@@ -101,6 +136,10 @@ public class ValidatorExecutionBenchmarks
         _compositeValidator = new CompositeValidator<CreateCustomerCommand>(_validators);
     }
 
+    /// <summary>
+    /// Validates a valid command through all validators.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark(Baseline = true)]
     [BenchmarkCategory("execution")]
     public async ValueTask<ValidationResult> ValidateAllValidCommand()
@@ -108,6 +147,10 @@ public class ValidatorExecutionBenchmarks
         return await _validators.ValidateAllAsync(_validCommand);
     }
 
+    /// <summary>
+    /// Validates a valid command through a composite validator.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("execution")]
     public async ValueTask<ValidationResult> CompositeValidCommand()
@@ -115,6 +158,10 @@ public class ValidatorExecutionBenchmarks
         return await _compositeValidator.ValidateAsync(_validCommand);
     }
 
+    /// <summary>
+    /// Validates an invalid command through all validators.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("execution")]
     public async ValueTask<ValidationResult> ValidateAllInvalidCommand()
@@ -122,6 +169,10 @@ public class ValidatorExecutionBenchmarks
         return await _validators.ValidateAllAsync(_invalidCommand);
     }
 
+    /// <summary>
+    /// Validates an invalid command through a composite validator.
+    /// </summary>
+    /// <returns>The validation result.</returns>
     [Benchmark]
     [BenchmarkCategory("execution")]
     public async ValueTask<ValidationResult> CompositeInvalidCommand()
