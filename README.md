@@ -9,7 +9,8 @@
 | License | MIT |
 
 This package provides validation models, validator contracts, composition helpers,
-and conversion into `Atya.Errors.Exceptions.ValidationException`.
+conversion into `Atya.Errors.Exceptions.ValidationException`, and additive
+conversion into `Atya.Foundation.Results`.
 
 ## Included APIs
 
@@ -28,6 +29,7 @@ using Atya.Errors.Validation.Abstractions;
 using Atya.Errors.Validation.Extensions;
 using Atya.Errors.Validation.Models;
 using Atya.Errors.Validation.Validators;
+using Atya.Foundation.Results;
 
 var validator = new CompositeValidator<CreateCustomerCommand>(
 [
@@ -36,6 +38,7 @@ var validator = new CompositeValidator<CreateCustomerCommand>(
 ]);
 
 var result = await validator.ValidateAsync(new CreateCustomerCommand("", "bad"));
+Result commandResult = result.ToResult();
 
 if (!result.IsValid)
 {
@@ -44,6 +47,14 @@ if (!result.IsValid)
 ```
 
 See `samples/Validation.Samples.Console` for a runnable example.
+
+## Results integration
+
+`ValidationFailure.ToError()` creates an `ErrorKind.Validation` error.
+`ValidationResult.ToResult()` and `ValidationResult.ToResultWithValue(value)` convert
+validation outcomes to untyped and typed Results. Invalid validation results use
+`atya.errors.validation.failed` by default unless the caller supplies a specific
+error code and message.
 
 ## Layout
 

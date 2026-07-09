@@ -6,6 +6,7 @@ using Atya.Errors.Exceptions;
 using Atya.Errors.Validation.Internal;
 using Atya.Errors.Validation.Models;
 using Atya.Foundation.Guards;
+using Atya.Foundation.Results;
 
 namespace Atya.Errors.Validation.Extensions;
 
@@ -14,6 +15,9 @@ namespace Atya.Errors.Validation.Extensions;
 /// </summary>
 public static class ValidationExtensions
 {
+    private const string DefaultResultErrorCode = "atya.errors.validation.failed";
+    private const string DefaultResultErrorMessage = "Validation failed.";
+
     /// <summary>
     /// Converts the result to a <see cref="ValidationException"/>.
     /// </summary>
@@ -76,5 +80,65 @@ public static class ValidationExtensions
         Guard.AgainstNull(right);
 
         return ValidationResult.Combine(left, right);
+    }
+
+    /// <summary>
+    /// Converts the validation failure to an <see cref="Error"/>.
+    /// </summary>
+    /// <param name="failure">The validation failure.</param>
+    /// <returns>An <see cref="Error"/> with <see cref="ErrorKind.Validation"/>.</returns>
+    public static Error ToError(this ValidationFailure failure)
+    {
+        Guard.AgainstNull(failure);
+
+        return new Error(
+            failure.ErrorCode ?? DefaultResultErrorCode,
+            failure.Message,
+            ErrorKind.Validation);
+    }
+
+    /// <summary>
+    /// Converts the validation result to an untyped <see cref="Result"/>.
+    /// </summary>
+    /// <param name="result">The validation result.</param>
+    /// <param name="errorCode">The error code used when the validation result is invalid.</param>
+    /// <param name="message">The error message used when the validation result is invalid.</param>
+    /// <returns>A successful result when validation succeeds; otherwise a validation failure result.</returns>
+    public static Result ToResult(
+        this ValidationResult result,
+        string errorCode = DefaultResultErrorCode,
+        string message = DefaultResultErrorMessage)
+    {
+        Guard.AgainstNull(result);
+        Guard.AgainstNullOrWhiteSpace(errorCode);
+        Guard.AgainstNullOrWhiteSpace(message);
+
+        return result.IsValid
+            ? Result.Success()
+            : Result.Failure(errorCode, message, ErrorKind.Validation);
+    }
+
+    /// <summary>
+    /// Converts the validation result to a typed <see cref="Result{TValue}"/>.
+    /// </summary>
+    /// <typeparam name="TValue">The success value type.</typeparam>
+    /// <param name="result">The validation result.</param>
+    /// <param name="value">The success value used when validation succeeds.</param>
+    /// <param name="errorCode">The error code used when the validation result is invalid.</param>
+    /// <param name="message">The error message used when the validation result is invalid.</param>
+    /// <returns>A successful result with <paramref name="value"/> when validation succeeds; otherwise a validation failure result.</returns>
+    public static Result<TValue> ToResultWithValue<TValue>(
+        this ValidationResult result,
+        TValue value,
+        string errorCode = DefaultResultErrorCode,
+        string message = DefaultResultErrorMessage)
+    {
+        Guard.AgainstNull(result);
+        Guard.AgainstNullOrWhiteSpace(errorCode);
+        Guard.AgainstNullOrWhiteSpace(message);
+
+        return result.IsValid
+            ? Result.Success(value)
+            : Result.Failure<TValue>(errorCode, message, ErrorKind.Validation);
     }
 }

@@ -6,7 +6,8 @@
         "type": "Project",
         "dependencies": {
           "Atya.Errors.Exceptions": "[1.0.0, )",
-          "Atya.Foundation.Guards": "[1.0.0, )"
+          "Atya.Foundation.Guards": "[1.0.0, )",
+          "Atya.Foundation.Results": "[1.0.0, )"
         }
       },
       "Atya.Errors.Exceptions": {
@@ -23,6 +24,12 @@
         "requested": "[1.0.0, )",
         "resolved": "1.0.0",
         "contentHash": "hLGlr7iPEAVMFEzNf2yGxEuJld/UGwBuC16TGyw3EGYrTQYf1ub3y24eoiFB4BGLQQDw1ll9hPoAdgVdJQEifQ=="
+      },
+      "Atya.Foundation.Results": {
+        "type": "CentralTransitive",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "TwXv95YCdXL0cyccLFRRde0x/JQARSw4Gt8xSB3RD/e4rqPinCCPkzeXfaeMaVj1rWKn8ScP1RFMwVIX9qSgMw=="
       }
     }
   }

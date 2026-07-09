@@ -5,6 +5,7 @@
 using Atya.Errors.Exceptions;
 using Atya.Errors.Validation.Extensions;
 using Atya.Errors.Validation.Models;
+using Atya.Foundation.Results;
 
 namespace Validation.UnitTests;
 
@@ -111,5 +112,161 @@ public sealed class ValidationExtensionsTests
         var act = () => left.Merge(null!);
 
         act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void ToError_Should_Convert_ValidationFailure()
+    {
+        var failure = ValidationFailureTestData.Create(
+            "Email",
+            "Email is required.",
+            "atya.errors.validation.email_required");
+
+        var error = failure.ToError();
+
+        error.Code.Should().Be("atya.errors.validation.email_required");
+        error.Message.Should().Be("Email is required.");
+        error.Kind.Should().Be(ErrorKind.Validation);
+    }
+
+    [Fact]
+    public void ToError_Should_Use_Default_Code_When_Failure_Has_No_Code()
+    {
+        var failure = ValidationFailureTestData.Create("Email", "Email is required.");
+
+        var error = failure.ToError();
+
+        error.Code.Should().Be("atya.errors.validation.failed");
+    }
+
+    [Fact]
+    public void ToError_Should_Throw_When_Failure_Is_Null()
+    {
+        var act = () => ValidationExtensions.ToError(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void ToResult_Should_Return_Success_When_Validation_Is_Valid()
+    {
+        var result = ValidationResult.Success.ToResult();
+
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ToResult_Should_Return_Failure_When_Validation_Is_Invalid()
+    {
+        var validationResult = ValidationResult.FromFailure(
+            ValidationFailureTestData.Create("Email", "Email is required."));
+
+        var result = validationResult.ToResult();
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Code.Should().Be("atya.errors.validation.failed");
+        result.Error.Message.Should().Be("Validation failed.");
+        result.Error.Kind.Should().Be(ErrorKind.Validation);
+    }
+
+    [Fact]
+    public void ToResult_Should_Use_Custom_Error_When_Validation_Is_Invalid()
+    {
+        var validationResult = ValidationResult.FromFailure(
+            ValidationFailureTestData.Create("Name", "Name is required."));
+
+        var result = validationResult.ToResult(
+            "atya.errors.validation.command_invalid",
+            "The command is invalid.");
+
+        result.Error.Code.Should().Be("atya.errors.validation.command_invalid");
+        result.Error.Message.Should().Be("The command is invalid.");
+        result.Error.Kind.Should().Be(ErrorKind.Validation);
+    }
+
+    [Fact]
+    public void ToResult_Should_Throw_When_Result_Is_Null()
+    {
+        var act = () => ValidationExtensions.ToResult(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Theory]
+    [InlineData(null, "Validation failed.")]
+    [InlineData("", "Validation failed.")]
+    [InlineData(" ", "Validation failed.")]
+    [InlineData("atya.errors.validation.failed", null)]
+    [InlineData("atya.errors.validation.failed", "")]
+    [InlineData("atya.errors.validation.failed", " ")]
+    public void ToResult_Should_Throw_When_Error_Arguments_Are_Invalid(string? errorCode, string? message)
+    {
+        var validationResult = ValidationResult.Success;
+
+        var act = () => validationResult.ToResult(errorCode!, message!);
+
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void ToResultOfT_Should_Return_Success_When_Validation_Is_Valid()
+    {
+        var result = ValidationResult.Success.ToResultWithValue("value");
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("value");
+    }
+
+    [Fact]
+    public void ToResultOfT_Should_Return_Failure_When_Validation_Is_Invalid()
+    {
+        var validationResult = ValidationResult.FromFailure(
+            ValidationFailureTestData.Create("Email", "Email is required."));
+
+        var result = validationResult.ToResultWithValue("value");
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Code.Should().Be("atya.errors.validation.failed");
+        result.Error.Kind.Should().Be(ErrorKind.Validation);
+    }
+
+    [Fact]
+    public void ToResultOfT_Should_Use_Custom_Error_When_Validation_Is_Invalid()
+    {
+        var validationResult = ValidationResult.FromFailure(
+            ValidationFailureTestData.Create("Name", "Name is required."));
+
+        var result = validationResult.ToResultWithValue(
+            "value",
+            "atya.errors.validation.command_invalid",
+            "The command is invalid.");
+
+        result.Error.Code.Should().Be("atya.errors.validation.command_invalid");
+        result.Error.Message.Should().Be("The command is invalid.");
+        result.Error.Kind.Should().Be(ErrorKind.Validation);
+    }
+
+    [Fact]
+    public void ToResultOfT_Should_Throw_When_Result_Is_Null()
+    {
+        var act = () => ValidationExtensions.ToResultWithValue(null!, "value");
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Theory]
+    [InlineData(null, "Validation failed.")]
+    [InlineData("", "Validation failed.")]
+    [InlineData(" ", "Validation failed.")]
+    [InlineData("atya.errors.validation.failed", null)]
+    [InlineData("atya.errors.validation.failed", "")]
+    [InlineData("atya.errors.validation.failed", " ")]
+    public void ToResultOfT_Should_Throw_When_Error_Arguments_Are_Invalid(string? errorCode, string? message)
+    {
+        var validationResult = ValidationResult.Success;
+
+        var act = () => validationResult.ToResultWithValue("value", errorCode!, message!);
+
+        act.Should().Throw<ArgumentException>();
     }
 }
