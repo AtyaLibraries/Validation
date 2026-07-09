@@ -9,8 +9,15 @@ using Atya.Errors.Validation.Validators;
 
 namespace Validation.Samples.Console;
 
+/// <summary>
+/// Runs the Atya.Errors.Validation console sample.
+/// </summary>
 public static class Program
 {
+    /// <summary>
+    /// Demonstrates composing validators and printing validation failures.
+    /// </summary>
+    /// <returns>A task that completes when the sample finishes.</returns>
     public static async Task Main()
     {
         var validator = new CompositeValidator<CreateCustomerCommand>(
