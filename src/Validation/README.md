@@ -124,9 +124,14 @@ Result result = validation.ToResult();
 Result<CreateCustomerCommand> typed = validation.ToResultWithValue(command);
 ```
 
-Invalid validation results become `ErrorKind.Validation` failures. The default
-result error code is `atya.errors.validation.failed`; pass explicit error code
-and message values when an API owns a more specific contract.
+Invalid validation results become `ErrorKind.Validation` failures. The parent
+error contains one child `Error` in `Details` for each validation failure. Each
+child uses the failure error code when present, otherwise
+`atya.errors.validation.failed`; the child `Message` is the failure message and
+`Target` is the property name.
+
+The default result error code is `atya.errors.validation.failed`; pass explicit
+error code and message values when an API owns a more specific contract.
 
 ## Versioning and support
 
