@@ -24,6 +24,7 @@ using Atya.Errors.Validation.Abstractions;
 using Atya.Errors.Validation.Extensions;
 using Atya.Errors.Validation.Models;
 using Atya.Errors.Validation.Validators;
+using Atya.Foundation.Results;
 
 var validator = new CompositeValidator<CreateCustomerCommand>(
 [
@@ -33,6 +34,7 @@ var validator = new CompositeValidator<CreateCustomerCommand>(
 
 var command = new CreateCustomerCommand("", "not-an-email");
 var result = await validator.ValidateAsync(command);
+Result commandResult = result.ToResult();
 
 if (!result.IsValid)
 {
@@ -88,6 +90,7 @@ sealed class EmailFormatValidator : IValidator<CreateCustomerCommand>
 - `ValidatorExtensions.ValidateAndThrowAsync` validates with one validator and throws on failure.
 - `CompositeValidator<T>` composes several validators behind one `IValidator<T>`.
 - `ValidationExtensions.ThrowIfInvalid` and `ToValidationException` convert failures into `Atya.Errors.Exceptions.ValidationException`.
+- `ValidationExtensions.ToError` and `ToResult` convert validation failures into `Atya.Foundation.Results` errors and results.
 
 ## Behavior
 
@@ -110,6 +113,20 @@ await validator.ValidateAndThrowAsync(command);
 The default exception message is `Validation failed.` and the default error code
 is `validation.failed`. Provide explicit values when those should be part of a
 public API contract.
+
+## Results
+
+Use `ToResult` when validation errors are expected domain outcomes:
+
+```csharp
+ValidationResult validation = await validator.ValidateAsync(command);
+Result result = validation.ToResult();
+Result<CreateCustomerCommand> typed = validation.ToResultWithValue(command);
+```
+
+Invalid validation results become `ErrorKind.Validation` failures. The default
+result error code is `atya.errors.validation.failed`; pass explicit error code
+and message values when an API owns a more specific contract.
 
 ## Versioning and support
 
