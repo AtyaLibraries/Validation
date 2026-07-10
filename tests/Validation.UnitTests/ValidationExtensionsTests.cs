@@ -127,6 +127,8 @@ public sealed class ValidationExtensionsTests
         error.Code.Should().Be("atya.errors.validation.email_required");
         error.Message.Should().Be("Email is required.");
         error.Kind.Should().Be(ErrorKind.Validation);
+        error.Target.Should().Be("Email");
+        error.Details.Should().BeEmpty();
     }
 
     [Fact]
@@ -167,6 +169,11 @@ public sealed class ValidationExtensionsTests
         result.Error.Code.Should().Be("atya.errors.validation.failed");
         result.Error.Message.Should().Be("Validation failed.");
         result.Error.Kind.Should().Be(ErrorKind.Validation);
+        result.Error.Details.Should().ContainSingle();
+        result.Error.Details[0].Code.Should().Be("atya.errors.validation.failed");
+        result.Error.Details[0].Message.Should().Be("Email is required.");
+        result.Error.Details[0].Target.Should().Be("Email");
+        result.Error.Details[0].Kind.Should().Be(ErrorKind.Validation);
     }
 
     [Fact]
@@ -182,6 +189,20 @@ public sealed class ValidationExtensionsTests
         result.Error.Code.Should().Be("atya.errors.validation.command_invalid");
         result.Error.Message.Should().Be("The command is invalid.");
         result.Error.Kind.Should().Be(ErrorKind.Validation);
+        result.Error.Details.Should().ContainSingle();
+        result.Error.Details[0].Target.Should().Be("Name");
+    }
+
+    [Fact]
+    public void ToResult_Should_Use_Failure_Code_For_Detail_When_Present()
+    {
+        var validationResult = ValidationResult.FromFailure(
+            ValidationFailureTestData.Create("Email", "Email is invalid.", "validation.email"));
+
+        var result = validationResult.ToResult();
+
+        result.Error.Details.Should().ContainSingle();
+        result.Error.Details[0].Code.Should().Be("validation.email");
     }
 
     [Fact]
@@ -228,6 +249,10 @@ public sealed class ValidationExtensionsTests
         result.IsFailure.Should().BeTrue();
         result.Error.Code.Should().Be("atya.errors.validation.failed");
         result.Error.Kind.Should().Be(ErrorKind.Validation);
+        result.Error.Details.Should().ContainSingle();
+        result.Error.Details[0].Message.Should().Be("Email is required.");
+        result.Error.Details[0].Target.Should().Be("Email");
+        result.Error.Details[0].Kind.Should().Be(ErrorKind.Validation);
     }
 
     [Fact]
@@ -244,6 +269,8 @@ public sealed class ValidationExtensionsTests
         result.Error.Code.Should().Be("atya.errors.validation.command_invalid");
         result.Error.Message.Should().Be("The command is invalid.");
         result.Error.Kind.Should().Be(ErrorKind.Validation);
+        result.Error.Details.Should().ContainSingle();
+        result.Error.Details[0].Target.Should().Be("Name");
     }
 
     [Fact]

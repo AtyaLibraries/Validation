@@ -50,11 +50,18 @@ See `samples/Validation.Samples.Console` for a runnable example.
 
 ## Results integration
 
-`ValidationFailure.ToError()` creates an `ErrorKind.Validation` error.
+`ValidationFailure.ToError()` creates an `ErrorKind.Validation` error with
+`Target` set to the failure property name.
 `ValidationResult.ToResult()` and `ValidationResult.ToResultWithValue(value)` convert
-validation outcomes to untyped and typed Results. Invalid validation results use
-`atya.errors.validation.failed` by default unless the caller supplies a specific
-error code and message.
+validation outcomes to untyped and typed Results. Invalid validation results return
+a parent `ErrorKind.Validation` error whose `Details` contains one child `Error` per
+validation failure. Each child uses the failure error code when present, otherwise
+`atya.errors.validation.failed`; the child `Message` is the failure message and
+`Target` is the property name.
+
+Invalid Result conversions use `atya.errors.validation.failed` by default unless the
+caller supplies a specific error code and message. `ToValidationException()` keeps
+its legacy default exception code, `validation.failed`, for compatibility.
 
 ## Layout
 

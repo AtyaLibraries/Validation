@@ -94,7 +94,8 @@ public static class ValidationExtensions
         return new Error(
             failure.ErrorCode ?? DefaultResultErrorCode,
             failure.Message,
-            ErrorKind.Validation);
+            failure.PropertyName,
+            kind: ErrorKind.Validation);
     }
 
     /// <summary>
@@ -115,7 +116,7 @@ public static class ValidationExtensions
 
         return result.IsValid
             ? Result.Success()
-            : Result.Failure(errorCode, message, ErrorKind.Validation);
+            : Result.Failure(ToResultError(result, errorCode, message));
     }
 
     /// <summary>
@@ -139,6 +140,20 @@ public static class ValidationExtensions
 
         return result.IsValid
             ? Result.Success(value)
-            : Result.Failure<TValue>(errorCode, message, ErrorKind.Validation);
+            : Result.Failure<TValue>(ToResultError(result, errorCode, message));
+    }
+
+    private static Error ToResultError(ValidationResult result, string errorCode, string message)
+    {
+        var details = result.Errors
+            .Select(static failure => failure.ToError())
+            .ToArray();
+
+        return new Error(
+            errorCode,
+            message,
+            target: null,
+            details,
+            ErrorKind.Validation);
     }
 }

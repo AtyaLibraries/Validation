@@ -171,7 +171,7 @@
         "dependencies": {
           "Atya.Errors.Exceptions": "[1.0.0, )",
           "Atya.Foundation.Guards": "[1.0.0, )",
-          "Atya.Foundation.Results": "[1.0.0, )"
+          "Atya.Foundation.Results": "[1.1.0, )"
         }
       },
       "Atya.Errors.Exceptions": {
@@ -191,9 +191,9 @@
       },
       "Atya.Foundation.Results": {
         "type": "CentralTransitive",
-        "requested": "[1.0.0, )",
-        "resolved": "1.0.0",
-        "contentHash": "TwXv95YCdXL0cyccLFRRde0x/JQARSw4Gt8xSB3RD/e4rqPinCCPkzeXfaeMaVj1rWKn8ScP1RFMwVIX9qSgMw=="
+        "requested": "[1.1.0, )",
+        "resolved": "1.1.0",
+        "contentHash": "7u4kPGnVubYn10agEOOxfMbN6GRLXpdtAMSCcCDvnNhSx4tdhrdrNf2AXKdNX+GP0Ekm6PSTsWlHMuZYMdFUYQ=="
       }
     }
   }
